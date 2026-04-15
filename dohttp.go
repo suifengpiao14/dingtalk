@@ -10,20 +10,14 @@ import (
 )
 
 var (
-	myHTTPClient *http.Client
+	//支持外部自定义http client
+	MyHTTPClient *http.Client = initDefaultHTTPClient()
 )
-
-const (
-	defaultDialTimeout = 2 * time.Second
-	defaultKeepAlive   = 2 * time.Second
-)
-
-func init() {
-	myHTTPClient = initDefaultHTTPClient()
-}
 
 // initDefaultHTTPClient for connection re-use
 func initDefaultHTTPClient() *http.Client {
+	defaultDialTimeout := 2 * time.Second
+	defaultKeepAlive := 2 * time.Second
 	client := &http.Client{
 		Transport: &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
@@ -49,7 +43,7 @@ func doRequest(ctx context.Context, callMethod string, endPoint string, header m
 	}
 	req = req.WithContext(ctx)
 	// use myHttpClient to send request
-	response, err := myHTTPClient.Do(req)
+	response, err := MyHTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
