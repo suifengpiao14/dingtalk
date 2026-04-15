@@ -116,8 +116,12 @@ func NewMarkDownMsg(title string, text interface{}, opts ...atOption) *markDownM
 	if len(msg.At.AtMobiles) > 0 {
 		var atStr = "\n -"
 		for _, mobile := range msg.At.AtMobiles {
+			atMobile := fmt.Sprintf("@%s", mobile)
+			if strings.Contains(msg.Markdown.Text, atMobile) { //如果已经包含，则不重复添加
+				continue
+			}
 			// 为@设置默认颜色
-			atStr = fmt.Sprintf("<font color=#0089ff>%s @%s</font>", atStr, mobile)
+			atStr = fmt.Sprintf("<font color=#0089ff>%s %s</font>", atStr, atMobile)
 		}
 		msg.Markdown.Text = msg.Markdown.Text + atStr
 	}
@@ -231,7 +235,7 @@ type dingMap struct {
 }
 
 func DingMap() *dingMap {
-	return &dingMap{m: make(map[string]MarkType), l: make([]string, 0, 0)}
+	return &dingMap{m: make(map[string]MarkType), l: make([]string, 0)}
 }
 
 func (d *dingMap) Set(val string, t MarkType) *dingMap {
